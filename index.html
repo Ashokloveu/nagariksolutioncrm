@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Nagarik Solution | Enterprise CRM - Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="nav-container">
+        <div class="nav-bar">
+            <div class="nav-logo">
+                <h2><i class="fas fa-chart-line"></i> Nagarik Solution CRM</h2>
+            </div>
+            <div class="nav-links">
+                <button class="nav-btn" onclick="switchTab('crm')" id="tabCRM">
+                    <i class="fas fa-building"></i> CRM Dashboard
+                </button>
+                <button class="nav-btn" onclick="switchTab('admin')" id="tabAdmin">
+                    <i class="fas fa-users-cog"></i> Admin Panel
+                </button>
+                <div class="user-info-nav">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="navUserName">User</span>
+                    <span id="navUserRole" class="role-badge"></span>
+                </div>
+                <button class="logout-nav" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CRM Dashboard Container -->
+    <div id="crmContainer" class="container">
+        <!-- Stats Cards -->
+        <div class="stats-row">
+            <div class="stat-card"><h3><i class="fas fa-building"></i> Total Organizations</h3><div class="stat-number" id="totalCount">0</div></div>
+            <div class="stat-card"><h3><i class="fas fa-project-diagram"></i> Active Projects</h3><div class="stat-number" id="activeProjects">0</div></div>
+            <div class="stat-card"><h3><i class="fas fa-trophy"></i> Won Deals</h3><div class="stat-number" id="wonDeals">0</div></div>
+            <div class="stat-card"><h3><i class="fas fa-calendar-week"></i> Pending Follow-ups</h3><div class="stat-number" id="pendingFollowups">0</div></div>
+        </div>
+
+        <!-- Form Card -->
+        <div class="crm-card" id="formCard">
+            <div class="card-header">
+                <h3><i class="fas fa-pen-fancy"></i> <span id="formTitle">Add New Organization Record</span></h3>
+                <div>
+                    <button type="button" class="btn btn-secondary" onclick="downloadSampleExcel()" style="padding: 6px 16px; font-size: 0.8rem; margin-right: 5px;"><i class="fas fa-file-excel"></i> Sample Excel</button>
+                    <label for="importExcelInput" class="btn btn-outline" style="cursor: pointer; padding: 6px 16px; font-size: 0.8rem; margin: 0;"><i class="fas fa-file-import"></i> Import</label>
+                    <input type="file" id="importExcelInput" accept=".xlsx, .xls" style="display: none;">
+                </div>
+            </div>
+            <form id="crmForm">
+                <div class="form-grid">
+                    <div class="input-group"><label><i class="fas fa-building"></i> Organization Type *</label><select id="orgType" required><option value="">-- Select --</option><option value="Health Post">🏥 Health Post</option><option value="Nagar Hospital">🏨 Nagar Hospital</option><option value="Private Organization">🏢 Private Organization</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-map"></i> Province *</label><select id="province" required><option value="">-- Select --</option><option value="Province 1 (Koshi)">Province 1 (Koshi)</option><option value="Province 2 (Madhesh)">Province 2 (Madhesh)</option><option value="Bagmati Province">Bagmati Province</option><option value="Gandaki Province">Gandaki Province</option><option value="Lumbini Province">Lumbini Province</option><option value="Karnali Province">Karnali Province</option><option value="Sudurpaschim Province">Sudurpaschim Province</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-city"></i> District *</label><select id="district" required><option value="">-- Select --</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-hospital-user"></i> Organization Name *</label><input type="text" id="bodyName" placeholder="Organization name" required></div>
+                    <div class="input-group"><label><i class="fas fa-code"></i> Project Type *</label><select id="projectType" required><option value="">-- Select --</option><option value="Health Post eHMIS">🏥 Health Post eHMIS</option><option value="Nagar Hospital eHMIS">🏨 Nagar Hospital eHMIS</option><option value="Data Collection System (DCS)">📊 DCS</option><option value="Hospital Management System">🏥 HMS</option><option value="eCommerce Website">🛒 eCommerce</option><option value="Other customized System">⚙️ Other</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-user-tie"></i> Contact Person *</label><input type="text" id="contactPerson" placeholder="Full name" required></div>
+                    <div class="input-group"><label><i class="fas fa-briefcase"></i> Designation</label><select id="designation"><option value="">-- Select --</option><option value="Mayor">Mayor</option><option value="CAO (Hakim)">CAO (Hakim)</option><option value="Health Officer (HO)">Health Officer (HO)</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-phone-alt"></i> Contact Info</label><input type="text" id="contactInfo" placeholder="Phone / Email"></div>
+                    <div class="input-group"><label><i class="fas fa-users"></i> Assigned To *</label><select id="assignedTo" required><option value="">-- Select --</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-phone-volume"></i> Follow-up Type</label><select id="followupType"><option value="Call Follow Up">📞 Call</option><option value="Visit">🏢 Visit</option><option value="WhatsApp">💬 WhatsApp</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-chart-line"></i> Followup Status</label><select id="followupStatus"><option value="Not Started">Not Started</option><option value="Initial Contact">Initial Contact</option><option value="Meeting Scheduled">Meeting Scheduled</option><option value="Follow-up Done">Follow-up Done</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-handshake"></i> Deal Status</label><select id="dealStatus"><option value="Pipeline">Pipeline</option><option value="Negotiation">Negotiation</option><option value="Won">Won</option><option value="Lost">Lost</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-hourglass-half"></i> Time Spent (hrs)</label><input type="number" id="timeSpent" step="0.5" value="0"></div>
+                    <div class="input-group"><label><i class="fas fa-calendar-alt"></i> Follow-up Date (BS) *</label><input type="text" id="followedDateBS" placeholder="YYYY-MM-DD" required></div>
+                    <div class="input-group"><label><i class="fas fa-calendar-plus"></i> Next Follow-up (BS)</label><input type="text" id="nextFollowupDateBS" placeholder="YYYY-MM-DD"></div>
+                    <div class="input-group"><label><i class="fas fa-money-bill-wave"></i> Budget (NPR)</label><input type="number" id="projectBudget" placeholder="Budget"></div>
+                    <div class="input-group"><label><i class="fas fa-sticky-note"></i> Notes</label><textarea rows="2" id="notes" style="padding:12px; border-radius:16px; border:2px solid var(--light-gray);"></textarea></div>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Record</button>
+                    <button type="button" class="btn btn-outline" id="resetFormBtn"><i class="fas fa-undo-alt"></i> Reset</button>
+                </div>
+                <input type="hidden" id="editRowId">
+            </form>
+        </div>
+
+        <!-- Table Card -->
+        <div class="crm-card">
+            <div class="card-header"><h3><i class="fas fa-table"></i> Records Management</h3></div>
+            <div class="filter-section">
+                <div class="filter-group">
+                    <select id="filterOrgType" class="filter-select"><option value="">All Org Types</option></select>
+                    <select id="filterProjectType" class="filter-select"><option value="">All Projects</option></select>
+                    <select id="filterProvince" class="filter-select"><option value="">All Provinces</option></select>
+                    <select id="filterDistrict" class="filter-select"><option value="">All Districts</option></select>
+                    <select id="filterAssignedTo" class="filter-select"><option value="">All Team Members</option></select>
+                    <input type="text" id="searchInput" placeholder="🔍 Search..." class="search-box">
+                    <button id="exportExcelBtn" class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+                </div>
+            </div>
+            <div class="table-wrapper"><table id="dataTable"><thead><tr><th>Org Type</th><th>Organization</th><th>Project</th><th>Contact</th><th>Assigned To</th><th>Status</th><th>Deal</th><th>Time</th><th>Follow-up</th><th>Next</th><th>Budget</th><th>Actions</th></tr></thead><tbody id="tableBody"><tr><td colspan="12" style="text-align:center;">Loading...</td></tr></tbody></table></div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Container -->
+    <div id="adminContainer" class="container" style="display: none;">
+        <!-- Admin Stats -->
+        <div class="stats-row">
+            <div class="stat-card"><h3><i class="fas fa-users"></i> Total Users</h3><div class="stat-number" id="totalUsers">0</div></div>
+            <div class="stat-card"><h3><i class="fas fa-user-shield"></i> Administrators</h3><div class="stat-number" id="adminCount">0</div></div>
+            <div class="stat-card"><h3><i class="fas fa-user-tie"></i> Managers</h3><div class="stat-number" id="managerCount">0</div></div>
+            <div class="stat-card"><h3><i class="fas fa-user"></i> Regular Users</h3><div class="stat-number" id="userCount">0</div></div>
+        </div>
+
+        <!-- User Management Form -->
+        <div class="crm-card">
+            <div class="card-header">
+                <h3><i class="fas fa-user-plus"></i> Add / Edit User</h3>
+            </div>
+            <form id="userForm">
+                <div class="form-grid">
+                    <div class="input-group"><label><i class="fas fa-user"></i> Full Name *</label><input type="text" id="userFullName" placeholder="Enter full name" required></div>
+                    <div class="input-group"><label><i class="fas fa-envelope"></i> Email *</label><input type="email" id="userEmail" placeholder="Enter email" required></div>
+                    <div class="input-group"><label><i class="fas fa-briefcase"></i> Role *</label><select id="userRole" required><option value="user">Team Member</option><option value="manager">Manager</option><option value="admin">Administrator</option></select></div>
+                    <div class="input-group"><label><i class="fas fa-lock"></i> Password</label><input type="password" id="userPassword" placeholder="Leave blank to keep current"></div>
+                    <div class="input-group"><label><i class="fas fa-toggle-on"></i> Status</label><select id="userStatus"><option value="active">Active</option><option value="inactive">Inactive</option></select></div>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save User</button>
+                    <button type="button" class="btn btn-outline" id="resetUserForm"><i class="fas fa-undo-alt"></i> Reset</button>
+                </div>
+                <input type="hidden" id="editUserId">
+            </form>
+        </div>
+
+        <!-- Users Table -->
+        <div class="crm-card">
+            <div class="card-header">
+                <h3><i class="fas fa-users"></i> System Users</h3>
+                <button id="exportUsersBtn" class="btn btn-secondary"><i class="fas fa-download"></i> Export Users</button>
+            </div>
+            <div class="filter-section">
+                <div class="filter-group">
+                    <select id="filterUserRole" class="filter-select"><option value="">All Roles</option><option value="admin">Admin</option><option value="manager">Manager</option><option value="user">User</option></select>
+                    <select id="filterUserStatus" class="filter-select"><option value="">All Status</option><option value="active">Active</option><option value="inactive">Inactive</option></select>
+                    <input type="text" id="searchUser" placeholder="🔍 Search user..." class="search-box">
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Created</th><th>Last Login</th><th>Actions</th></tr></thead>
+                    <tbody id="usersTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Activity Log -->
+        <div class="crm-card">
+            <div class="card-header">
+                <h3><i class="fas fa-history"></i> User Activity Log</h3>
+                <button id="clearLogsBtn" class="btn btn-outline"><i class="fas fa-trash"></i> Clear Logs</button>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead><tr><th>Timestamp</th><th>User</th><th>Action</th><th>Details</th></tr></thead>
+                    <tbody id="activityLogsBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div id="transferModal" class="modal"><div class="modal-content"><h3><i class="fas fa-exchange-alt"></i> Transfer Task</h3><div id="transferRecordInfo"></div><select id="newAssignee" class="filter-select" style="width:100%; margin:10px 0;"></select><div style="display:flex; gap:10px; justify-content:flex-end;"><button class="btn btn-outline" onclick="closeTransferModal()">Cancel</button><button class="btn btn-primary" onclick="confirmTransfer()">Transfer</button></div></div></div>
+
+    <script src="config.js"></script>
+    <script src="google-sheets.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
