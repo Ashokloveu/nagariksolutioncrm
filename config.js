@@ -4,7 +4,7 @@ const CONFIG = {
     GOOGLE_SHEETS: {
         // IMPORTANT: Replace with your Google Apps Script Web App URL after deployment
         API_URL: '', // Example: 'https://script.google.com/macros/s/XXXXXXXX/exec'
-        SHEET_ID: '', // Your Google Sheet ID
+        SHEET_ID: '1rEU27LpAQCf6VxYSrYCE1o_C1JXt7NT_yJcg6Kbxvsk', // Your Google Sheet ID
         SHEET_NAME: 'CRM_Data'
     },
     
